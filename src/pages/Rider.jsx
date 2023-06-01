@@ -1,8 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../components/Modal";
+import { getRidersList } from "../apiCalls";
 
 const Rider = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [ridersData, setRidersData] = useState(null);
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getRidersList();
+        setRidersData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+  const riderDetails = [];
+
+  for (let arrofObject in ridersData) {
+    riderDetails.push(ridersData[arrofObject]);
+  }
 
   const OpenModal = () => {
     setOpenModal(true);
@@ -15,7 +36,7 @@ const Rider = () => {
     <div className="w-11/12 mx-auto">
       <div className="flex justify-between">
         {openModal && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="w-full fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
             <Modal closeModal={closeModal} />
           </div>
         )}
@@ -48,6 +69,10 @@ const Rider = () => {
               Cost per Km
             </th>
             <th className="px-6 py-6 bg-[#0080FF] text-left text-xs leading-4 font-lg text-white uppercase tracking-wider border">
+              Phone number
+            </th>
+
+            <th className="px-6 py-6 bg-[#0080FF] text-left text-xs leading-4 font-lg text-white uppercase tracking-wider border">
               Created On
             </th>
             <th className="px-6 py-6 bg-[#0080FF] text-left text-xs leading-4 font-lg text-white uppercase tracking-wider border">
@@ -56,32 +81,31 @@ const Rider = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200  border border-gray-300 border-solid rounded-lg p-4">
-          <tr>
-            <td className="px-6 py-4 whitespace-no-wrap border">1</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Lagos</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Ibadan</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">100 per Km</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">22-10-23</td>
-            <td className="px-6 py-4 whitespace-no-wrap border text-[orange]">Disable</td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-no-wrap border">2</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Kenya</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Nigeria</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">100 per Km</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">22-10-23</td>
-            <td className="px-6 py-4 whitespace-no-wrap border text-[green]">Enable</td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-no-wrap border">3</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Lagos</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">Ibadan</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">100 per Km</td>
-            <td className="px-6 py-4 whitespace-no-wrap border">22-1--23</td>
-            <td className="px-6 py-4 whitespace-no-wrap border text-[orange]">Disable</td>
-          </tr>
-
-          {/* Add more table rows here */}
+          {riderDetails?.map((rider, index) => (
+            <tr>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.id}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.name}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.area}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.cost}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.phone}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.created}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border">
+                {rider.status}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
